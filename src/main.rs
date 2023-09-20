@@ -1,7 +1,9 @@
 pub mod reader;
+#[allow(dead_code)]
 pub mod types;
 
 use anyhow::Result;
+use types::Root;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -9,6 +11,8 @@ async fn main() -> Result<()> {
     .await?
     .text()
     .await?;
-    println!("{body}");
+
+    let result: Root = serde_json::from_str(&body).expect("Failed to deserialize JSON");
+    println!("{:#?}", result);
     Ok(())
 }

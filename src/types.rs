@@ -1,65 +1,72 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-struct Root {
+#[serde(rename_all = "camelCase")]
+pub struct Root {
     matches: Vec<Match>,
     count: i32,
 }
 
 #[derive(Debug, Deserialize)]
-struct Player {
-    race: i32,
-    rndRace: Option<i32>,
-    oldMmr: i32,
-    currentMmr: i32,
-    battleTag: String,
-    name: String,
-    mmrGain: i32,
-    won: bool,
-    location: Option<String>,
-    countryCode: Option<String>,
-    country: Option<String>,
-    twitch: Option<String>,
+#[serde(rename_all = "camelCase")]
+pub struct Match {
+    map: String,
+    map_name: String,
+    map_id: i32,
+    id: String,
+    #[serde(rename = "original-ongoing-match-id")]
+    original_ongoing_match_id: String,
+    flo_match_id: i32,
+    duration_in_seconds: i32,
+    start_time: String,
+    end_time: String,
+    game_mode: i32,
+    teams: Vec<Team>,
+    gate_way: i32,
+    season: i32,
+    number: Option<i32>,
+    server_info: ServerInfo,
 }
 
 #[derive(Debug, Deserialize)]
-struct Team {
+#[serde(rename_all = "camelCase")]
+pub struct Team {
     players: Vec<Player>,
     won: bool,
 }
 
 #[derive(Debug, Deserialize)]
-struct PlayerServerInfo {
-    battleTag: String,
-    averagePing: i32,
-    currentPing: i32,
+#[serde(rename_all = "camelCase")]
+pub struct Player {
+    race: i32,
+    rnd_race: Option<i32>,
+    old_mmr: i32,
+    current_mmr: i32,
+    battle_tag: String,
+    name: String,
+    mmr_gain: i32,
+    won: bool,
+    location: Option<String>,
+    country_code: Option<String>,
+    country: Option<String>,
+    twitch: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
-struct ServerInfo {
+#[serde(rename_all = "camelCase")]
+pub struct ServerInfo {
     provider: String,
-    nodeId: i32,
-    countryCode: Option<String>,
+    node_id: i32,
+    country_code: Option<String>,
     location: Option<String>,
     name: String,
-    playerServerInfos: Vec<PlayerServerInfo>,
+    player_server_infos: Vec<PlayerServerInfo>,
 }
 
 #[derive(Debug, Deserialize)]
-struct Match {
-    map: String,
-    mapName: String,
-    mapId: i32,
-    id: String,
-    originalOngoingMatchId: String,
-    floMatchId: i32,
-    durationInSeconds: i32,
-    startTime: String,
-    endTime: String,
-    gameMode: i32,
-    teams: Vec<Team>,
-    gateWay: i32,
-    season: i32,
-    number: Option<i32>,
-    serverInfo: ServerInfo,
+#[serde(rename_all = "camelCase")]
+pub struct PlayerServerInfo {
+    battle_tag: String,
+    average_ping: i32,
+    current_ping: i32,
 }

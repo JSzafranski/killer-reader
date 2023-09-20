@@ -1,19 +1,17 @@
 use crate::types::MatchCollection;
 use anyhow::{Ok, Result};
-
-// fn
-
 use reqwest::Client;
 
-async fn get_page(
-    client: Client,
+pub async fn get_page(
+    client: &Client,
     season: i32,
     race: Race,
     game_mode: GameMode,
 ) -> Result<MatchCollection> {
     let request = client
         .get("https://website-backend.w3champions.com/api/matches/search")
-        .query(&[("playerRace", race.race_to_raceid())])
+        // not working, todo
+        // .query(&[("playerRace", race.race_to_raceid())])
         .query(&[("gateWay", "20")])
         .query(&[("season", season.to_string())])
         .query(&[("gameMode", game_mode.gamemode_to_gamemodeid())])
@@ -24,7 +22,7 @@ async fn get_page(
     Ok(result)
 }
 
-enum Race {
+pub enum Race {
     HU,
     UD,
     ORC,
@@ -46,7 +44,7 @@ impl Race {
     }
 }
 
-enum GameMode {
+pub enum GameMode {
     ONEVSONE,
     TWOVSTWO,
     FOURVSFOUR,

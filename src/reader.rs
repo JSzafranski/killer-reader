@@ -7,6 +7,7 @@ pub async fn get_page(
     season: i32,
     // race: Race,
     game_mode: GameMode,
+    player: &str,
 ) -> Result<MatchCollection> {
     let request = client
         .get("https://website-backend.w3champions.com/api/matches/search")
@@ -15,7 +16,7 @@ pub async fn get_page(
         .query(&[("gateWay", "20")])
         .query(&[("season", season.to_string())])
         .query(&[("gameMode", game_mode.gamemode_to_gamemodeid())])
-        .query(&[("playerId", "LEON#23655")])
+        .query(&[("playerId", player)])
         .build()?;
     let body = client.execute(request).await?.text().await?;
     let result: MatchCollection = serde_json::from_str(&body).expect("Failed to deserialize JSON");

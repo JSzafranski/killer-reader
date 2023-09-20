@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Root {
+pub struct MatchCollection {
     matches: Vec<Match>,
     count: i32,
 }

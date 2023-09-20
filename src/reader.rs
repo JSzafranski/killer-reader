@@ -5,19 +5,19 @@ use reqwest::Client;
 pub async fn get_page(
     client: &Client,
     season: i32,
-    // race: Race,
+    race: Race,
     game_mode: GameMode,
     player: &str,
 ) -> Result<MatchCollection> {
     let request = client
         .get("https://website-backend.w3champions.com/api/matches/search")
-        // not working, todo
-        // .query(&[("playerRace", race.race_to_raceid())])
         .query(&[("gateWay", "20")])
         .query(&[("season", season.to_string())])
         .query(&[("gameMode", game_mode.gamemode_to_gamemodeid())])
         .query(&[("playerId", player)])
+        .query(&[("playerRace", race.race_to_raceid())])
         .build()?;
+    println!("{}", request.url());
     let body = client.execute(request).await?.text().await?;
     let result: MatchCollection = serde_json::from_str(&body).expect("Failed to deserialize JSON");
     Ok(result)

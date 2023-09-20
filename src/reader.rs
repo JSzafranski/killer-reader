@@ -5,7 +5,7 @@ use reqwest::Client;
 pub async fn get_page(
     client: &Client,
     season: i32,
-    race: Race,
+    // race: Race,
     game_mode: GameMode,
 ) -> Result<MatchCollection> {
     let request = client

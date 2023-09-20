@@ -3,14 +3,14 @@
 pub mod reader;
 pub mod types;
 
-use crate::reader::{GameMode, Race};
+use crate::reader::GameMode;
 use anyhow::Result;
 use reqwest::Client;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     let client = Client::new();
-    let page = reader::get_page(&client, 14, Race::HU, GameMode::ONEVSONE).await?;
+    let page = reader::get_page(&client, 14, GameMode::ONEVSONE).await?;
     println!("{:#?}", page);
     Ok(())
 }

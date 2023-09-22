@@ -69,7 +69,7 @@ impl Race {
             Race::UD => 8.to_string(),
             Race::ORC => 2.to_string(),
             Race::NE => 4.to_string(),
-            Race::ALL => todo!(),
+            Race::ALL => 16.to_string(),
             Race::RANDOM => 0.to_string(),
         }
     }

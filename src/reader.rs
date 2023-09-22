@@ -1,13 +1,41 @@
-use crate::types::MatchCollection;
+use crate::types::{Match, MatchCollection};
 use anyhow::{Ok, Result};
 use reqwest::Client;
 
-pub async fn get_page(
+pub async fn get_matches(
     client: &Client,
     season: i32,
     race: Race,
     game_mode: GameMode,
     player: &str,
+) -> Result<Vec<Match>> {
+    let mut matches = Vec::new();
+    let mut offset = 0;
+    let match_collection = get_page(client, season, &race, &game_mode, player, offset).await?;
+
+    while !get_page(client, season, &race, &game_mode, player, offset)
+        .await?
+        .matches
+        .is_empty()
+    {
+        let mut match_collection =
+            get_page(client, season, &race, &game_mode, player, offset).await?;
+        matches.append(&mut match_collection.matches);
+        offset += 100;
+    }
+    println!("pobrano mecze");
+
+    assert_eq!(matches.len() as i32, match_collection.count);
+    Ok(matches)
+}
+
+pub async fn get_page(
+    client: &Client,
+    season: i32,
+    race: &Race,
+    game_mode: &GameMode,
+    player: &str,
+    offset: i32,
 ) -> Result<MatchCollection> {
     let request = client
         .get("https://website-backend.w3champions.com/api/matches/search")
@@ -16,6 +44,8 @@ pub async fn get_page(
         .query(&[("gameMode", game_mode.gamemode_to_gamemodeid())])
         .query(&[("playerId", player)])
         .query(&[("playerRace", race.race_to_raceid())])
+        .query(&[("offset", offset)])
+        .query(&[("pageSize", 100)])
         .build()?;
     println!("{}", request.url());
     let body = client.execute(request).await?.text().await?;

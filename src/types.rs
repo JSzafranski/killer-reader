@@ -3,8 +3,8 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MatchCollection {
-    matches: Vec<Match>,
-    count: i32,
+    pub matches: Vec<Match>,
+    pub count: i32,
 }
 
 #[derive(Debug, Deserialize)]

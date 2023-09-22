@@ -10,12 +10,9 @@ use reqwest::Client;
 #[tokio::main]
 async fn main() -> Result<()> {
     let client = Client::new();
-    // let page =
-    //     reader::get_page(&client, 14, &Race::HU, &GameMode::ONEVSONE, "Leon#23655", 0).await?;
-    // println!("{:#?}", page);
     let matches =
-        reader::get_matches(&client, 14, Race::HU, GameMode::ONEVSONE, "Leon#23655").await?;
+        reader::get_matches(&client, 16, Race::ALL, GameMode::ONEVSONE, "Happy#2384").await?;
     // println!("{:#?}", matches);
-
+    assert!(!matches.is_empty());
     Ok(())
 }

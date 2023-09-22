@@ -11,21 +11,20 @@ pub async fn get_matches(
 ) -> Result<Vec<Match>> {
     let mut matches = Vec::new();
     let mut offset = 0;
-    let match_collection = get_page(client, season, &race, &game_mode, player, offset).await?;
 
-    while !get_page(client, season, &race, &game_mode, player, offset)
-        .await?
-        .matches
-        .is_empty()
-    {
+    loop {
         let mut match_collection =
             get_page(client, season, &race, &game_mode, player, offset).await?;
+        if match_collection.matches.is_empty() {
+            assert_eq!(matches.len() as i32, match_collection.count);
+            break;
+        };
         matches.append(&mut match_collection.matches);
         offset += 100;
     }
-    println!("pobrano mecze");
 
-    assert_eq!(matches.len() as i32, match_collection.count);
+    println!("downloaded {} matches", matches.len());
+
     Ok(matches)
 }
 

@@ -11,7 +11,7 @@ pub async fn get_page(
 ) -> Result<MatchCollection> {
     let request = client
         .get("https://website-backend.w3champions.com/api/matches/search")
-        .query(&[("gateWay", "20")])
+        // .query(&[("gateWay", "20")])
         .query(&[("season", season.to_string())])
         .query(&[("gameMode", game_mode.gamemode_to_gamemodeid())])
         .query(&[("playerId", player)])
@@ -23,6 +23,7 @@ pub async fn get_page(
     Ok(result)
 }
 
+// based on https://github.com/w3champions/website/blob/master/src/store/types.ts
 pub enum Race {
     HU,
     UD,

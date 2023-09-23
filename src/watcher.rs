@@ -1,6 +1,7 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Result;
+use log::{debug, warn};
 use reqwest::Client;
 
 use crate::types::{Match, MatchCollection, Player};
@@ -12,15 +13,20 @@ pub async fn get_ongoing_matches(client: &Client) -> Result<Vec<Match>> {
     loop {
         let mut match_collection = get_page(client, offset).await?;
         if match_collection.matches.is_empty() {
-            // not applicable, live data is subject to change while reading
-            // assert_eq!(matches.len() as i32, match_collection.count);
+            if matches.len() as i32 != match_collection.count {
+                warn!(
+                    "Recorded {} matches, but endpoint reported {}",
+                    matches.len(),
+                    match_collection.count
+                )
+            };
             break;
         };
         matches.append(&mut match_collection.matches);
         offset += 100;
     }
 
-    println!("downloaded {} matches", matches.len());
+    debug!("downloaded {} matches", matches.len());
 
     Ok(matches)
 }
@@ -30,7 +36,7 @@ async fn get_page(client: &Client, offset: i32) -> Result<MatchCollection> {
         .get("https://website-backend.w3champions.com/api/matches/ongoing")
         .query(&[("offset", offset)])
         .build()?;
-    println!("{}", request.url());
+    debug!("{}", request.url());
     let body = client.execute(request).await?.text().await?;
     let result: MatchCollection = serde_json::from_str(&body).expect("Failed to deserialize JSON");
     Ok(result)

@@ -1,5 +1,6 @@
 use crate::types::{Match, MatchCollection};
 use anyhow::{Ok, Result};
+use log::{debug, warn};
 use reqwest::Client;
 
 pub async fn get_matches(
@@ -16,14 +17,20 @@ pub async fn get_matches(
         let mut match_collection =
             get_page(client, season, &race, &game_mode, player, offset).await?;
         if match_collection.matches.is_empty() {
-            assert_eq!(matches.len() as i32, match_collection.count);
+            if matches.len() as i32 != match_collection.count {
+                warn!(
+                    "Recorded {} matches, but endpoint reported {}",
+                    matches.len(),
+                    match_collection.count
+                )
+            };
             break;
         };
         matches.append(&mut match_collection.matches);
         offset += 100;
     }
 
-    println!("downloaded {} matches", matches.len());
+    debug!("downloaded {} matches", matches.len());
 
     Ok(matches)
 }
@@ -46,7 +53,7 @@ pub async fn get_page(
         .query(&[("offset", offset)])
         .query(&[("pageSize", 100)])
         .build()?;
-    println!("{}", request.url());
+    debug!("{}", request.url());
     let body = client.execute(request).await?.text().await?;
     let result: MatchCollection = serde_json::from_str(&body).expect("Failed to deserialize JSON");
     Ok(result)

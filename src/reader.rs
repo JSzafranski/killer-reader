@@ -97,3 +97,21 @@ impl GameMode {
         }
     }
 }
+
+pub async fn get_maupa_mmr(
+    client: &Client,
+    // season: i32,
+    // race: Race,
+    // game_mode: GameMode,
+    // player: &str,
+) -> Result<i32> {
+    let matches = get_matches(&client, 16, Race::HU, GameMode::ONEVSONE, "SaulApeMan#2163").await?;
+    for team in &matches.get(0).unwrap().teams {
+        for player in &team.players {
+            if player.name == "SaulApeMan" {
+                return Ok(player.current_mmr);
+            }
+        }
+    }
+    Ok(0)
+}

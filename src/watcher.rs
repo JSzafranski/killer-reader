@@ -58,7 +58,7 @@ pub fn get_active_players(ongoing_matches: Vec<Match>) -> HashMap<String, Player
 
 pub fn compare_to_watchlist(
     active_players: HashMap<String, Player>,
-    watchlist: Vec<String>,
+    watchlist: &Vec<String>,
 ) -> Vec<Player> {
     watchlist
         .iter()

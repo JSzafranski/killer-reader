@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 pub mod reader;
 pub mod types;
 pub mod watcher;
@@ -12,6 +10,7 @@ use log::trace;
 use reqwest::Client;
 
 const WATCHLIST_PATH: &str = "./watchlist.txt";
+const API_CALL_FREQUENCY: time::Duration = time::Duration::from_secs(20);
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -27,12 +26,10 @@ async fn main() -> Result<()> {
     loop {
         let ongoing_matches = watcher::get_ongoing_matches(&client).await?;
         let active_players = watcher::get_active_players(ongoing_matches);
-        let active_watched_players =
-            watcher::compare_to_watchlist(active_players, watchlist.clone());
+        let active_watched_players = watcher::compare_to_watchlist(active_players, &watchlist);
         for player in active_watched_players {
             println!("ONLINE {}: {} MMR", player.name, player.old_mmr);
         }
-
-        sleep(time::Duration::from_secs(20));
+        sleep(API_CALL_FREQUENCY);
     }
 }

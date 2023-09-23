@@ -59,16 +59,16 @@ pub fn get_active_players(ongoing_matches: Vec<Match>) -> HashMap<String, Player
 pub fn compare_to_watchlist(
     active_players: HashMap<String, Player>,
     watchlist: &Vec<String>,
-) -> Vec<Player> {
-    watchlist
-        .iter()
-        .filter_map(|name| active_players.get(name).cloned())
+) -> HashMap<String, Player> {
+    active_players
+        .into_iter()
+        .filter(|(name, _)| watchlist.contains(name))
         .collect()
 }
 
 pub fn read_watchlist(config: PathBuf) -> Vec<String> {
     std::fs::read_to_string(config)
-        .expect("Failed to read input")
+        .expect("Failed to read the watchlist")
         .split("\n")
         .map(|s| s.to_string())
         .collect()

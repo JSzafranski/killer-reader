@@ -27,8 +27,8 @@ async fn main() -> Result<()> {
         let ongoing_matches = watcher::get_ongoing_matches(&client).await?;
         let active_players = watcher::get_active_players(ongoing_matches);
         let active_watched_players = watcher::compare_to_watchlist(active_players, &watchlist);
-        for player in active_watched_players {
-            println!("ONLINE {}: {} MMR", player.name, player.old_mmr);
+        for (name, data) in active_watched_players {
+            println!("ONLINE {}: {} MMR", name, data.old_mmr);
         }
         sleep(API_CALL_FREQUENCY);
     }

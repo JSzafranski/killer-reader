@@ -14,7 +14,7 @@ use reqwest::Client;
 async fn main() -> Result<()> {
     let client = Client::new();
     let matches =
-        reader::get_matches(&client, 16, Race::ALL, GameMode::ONEVSONE, "Happy#2384").await?;
+        reader::get_matches(&client, 16, Race::UD, GameMode::ONEVSONE, "Happy#2384").await?;
     // println!("{:#?}", matches);
     assert!(!matches.is_empty());
 
@@ -35,7 +35,7 @@ async fn main() -> Result<()> {
         let active_players = watcher::get_players(ongoing_matches);
         println!(
             "{:?}",
-            watcher::compare_to_watched(active_players, watchlist.clone())
+            watcher::compare_to_watchlist(active_players, watchlist.clone())
         );
         sleep(time::Duration::from_secs(10));
     }

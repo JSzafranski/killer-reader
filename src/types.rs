@@ -35,7 +35,7 @@ pub struct Team {
     pub won: bool,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Player {
     pub race: i32,

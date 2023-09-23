@@ -1,9 +1,9 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Result;
 use reqwest::Client;
 
-use crate::types::{Match, MatchCollection};
+use crate::types::{Match, MatchCollection, Player};
 
 pub async fn get_ongoing_matches(client: &Client) -> Result<Vec<Match>> {
     let mut matches = Vec::new();
@@ -36,14 +36,14 @@ async fn get_page(client: &Client, offset: i32) -> Result<MatchCollection> {
     Ok(result)
 }
 
-pub fn get_players(ongoing_matches: Vec<Match>) -> HashSet<String> {
-    let players: HashSet<String> = ongoing_matches
-        .iter() // Iterate over the vector of Match structs
-        .flat_map(|match_item| {
-            match_item.teams.iter().flat_map(|team| {
-                team.players.iter().map(|player| {
-                    player.name.clone() // Extract the "name" field and clone it
-                })
+pub fn get_active_players(ongoing_matches: Vec<Match>) -> HashMap<String, Player> {
+    let players: HashMap<String, Player> = ongoing_matches
+        .iter()
+        .flat_map(|match_entry| {
+            match_entry.teams.iter().flat_map(|team| {
+                team.players
+                    .iter()
+                    .map(|player| (player.name.clone(), player.clone()))
             })
         })
         .collect();
@@ -51,16 +51,16 @@ pub fn get_players(ongoing_matches: Vec<Match>) -> HashSet<String> {
 }
 
 pub fn compare_to_watchlist(
-    active_players: HashSet<String>,
-    watchlist: HashSet<String>,
-) -> HashSet<String> {
-    active_players
-        .intersection(&watchlist)
-        .cloned()
-        .collect::<HashSet<String>>()
+    active_players: HashMap<String, Player>,
+    watchlist: Vec<String>,
+) -> Vec<Player> {
+    watchlist
+        .iter()
+        .filter_map(|name| active_players.get(name).cloned())
+        .collect()
 }
 
-fn read_watchlist(config: PathBuf) -> Vec<String> {
+pub fn read_watchlist(config: PathBuf) -> Vec<String> {
     std::fs::read_to_string(config)
         .expect("Failed to read input")
         .split("\n")
